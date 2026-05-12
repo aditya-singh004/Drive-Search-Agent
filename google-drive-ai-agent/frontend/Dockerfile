@@ -17,4 +17,5 @@ COPY . /app
 EXPOSE 8501
 ENV BACKEND_URL=http://api:8000
 
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+# Render injects PORT; default 8501 for local/docker-compose.
+CMD ["sh", "-c", "streamlit run app.py --server.port=${PORT:-8501} --server.address=0.0.0.0 --server.headless=true"]

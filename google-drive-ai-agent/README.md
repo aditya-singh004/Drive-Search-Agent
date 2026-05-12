@@ -164,6 +164,60 @@ docker compose up --build
 - API: `http://localhost:8000`
 - UI: `http://localhost:8501`
 
+## Deploy on Render (backend + frontend)
+
+Host **two** Web Services from this repo: one Docker image for the API, one for Streamlit. Dockerfiles listen on Render’s **`PORT`** (`backend/Dockerfile`, `frontend/Dockerfile`).
+
+### 1) Push the project to GitHub
+
+Render builds from your repository.
+
+### 2) Create the **API** service
+
+1. **New → Web Service →** connect repo.
+2. **Runtime:** Docker.
+3. **Root Directory:** leave empty **or** use Blueprint (see below).
+4. If configuring manually:
+   - **Dockerfile Path:** `backend/Dockerfile`
+   - **Docker build context:** `backend` (Render may label this “Docker Context” — set to `backend`).
+5. **Health Check Path:** `/health`
+
+**Environment variables** (Environment tab):
+
+| Key | Value |
+|-----|--------|
+| `OPENAI_API_KEY` | Your OpenAI key |
+| `GOOGLE_DRIVE_FOLDER_ID` | Your Drive folder ID |
+| `GOOGLE_SERVICE_ACCOUNT_FILE` | Path where the JSON key file is mounted (see Secret Files below) |
+| `CORS_ORIGINS` | Your Streamlit site URL, e.g. `https://drive-search-ui.onrender.com` (comma-separated if multiple) |
+
+**Service account JSON on Render:** do **not** commit the key. Use **Environment → Secret Files**: upload your JSON and note the **mount path** Render shows (often under `/etc/secrets/`). Set `GOOGLE_SERVICE_ACCOUNT_FILE` to that **exact path** (e.g. `/etc/secrets/google-service-account.json`).
+
+Deploy and copy the API URL, e.g. `https://drive-search-api.onrender.com`.
+
+### 3) Create the **Streamlit** service
+
+1. **New → Web Service →** same repo.
+2. **Dockerfile Path:** `frontend/Dockerfile`
+3. **Docker build context:** `frontend`
+
+**Environment:**
+
+| Key | Value |
+|-----|--------|
+| `BACKEND_URL` | `https://<your-api-name>.onrender.com` (HTTPS, no trailing slash) |
+
+Redeploy if needed. Open the Streamlit URL and chat.
+
+### 4) Optional: Blueprint
+
+Repo root includes **`render.yaml`**. You can use **New → Blueprint** to create both services; then fill **sync: false** secrets in the dashboard (`OPENAI_API_KEY`, paths, `CORS_ORIGINS`, `BACKEND_URL`).
+
+### Notes
+
+- **Cold starts:** Free tier sleeps idle services; first request can take ~30–60s.
+- **Order:** Deploy API first → set `BACKEND_URL` on UI → set `CORS_ORIGINS` on API to the UI URL → redeploy API if CORS blocks the browser.
+
 ## Example queries
 
 - “Find resumes”
