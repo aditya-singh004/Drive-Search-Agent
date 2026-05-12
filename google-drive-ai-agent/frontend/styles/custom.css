@@ -1,0 +1,156 @@
+/* Global layout */
+html, body, [data-testid="stAppViewContainer"] {
+  background: radial-gradient(1200px 600px at 10% -10%, #1f3b73 0%, #0b1220 55%, #070b12 100%);
+  color: #e8eefc;
+}
+
+.block-container {
+  padding-top: 1.25rem;
+  padding-bottom: 3rem;
+  max-width: 1100px;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Headers */
+.app-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  margin-bottom: 1rem;
+}
+
+.app-hero h1 {
+  font-size: 1.55rem;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.app-hero p {
+  margin: 0.35rem 0 0 0;
+  opacity: 0.85;
+  font-size: 0.98rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.25);
+  font-size: 0.85rem;
+}
+
+/* Chat */
+.chat-scroll {
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.chat-row {
+  display: flex;
+  margin: 0.75rem 0;
+}
+
+.msg-user {
+  justify-content: flex-end;
+}
+
+.msg-assistant {
+  justify-content: flex-start;
+}
+
+.chat-bubble {
+  max-width: min(760px, 92%);
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+}
+
+.msg-user .chat-bubble {
+  background: linear-gradient(180deg, rgba(86, 156, 255, 0.35), rgba(86, 156, 255, 0.18));
+  border-color: rgba(86, 156, 255, 0.35);
+}
+
+.chat-label {
+  font-size: 0.78rem;
+  opacity: 0.75;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.chat-text {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: inline-flex;
+  gap: 6px;
+  padding: 0.75rem 0.25rem;
+}
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.55);
+  animation: bounce 1.2s infinite ease-in-out;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.30s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.45; }
+  40% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* Result cards */
+.gdrive-card {
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 0.85rem 0.95rem;
+  margin: 0.5rem 0 0.25rem 0;
+  background: rgba(255,255,255,0.05);
+}
+.gdrive-card-title {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.gdrive-card-meta {
+  margin-top: 0.35rem;
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+.muted { opacity: 0.75; }
+
+/* Inputs */
+div[data-testid="stChatInput"] {
+  position: sticky;
+  bottom: 0;
+  background: transparent;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .app-hero { flex-direction: column; align-items: flex-start; }
+  .chat-scroll { max-height: calc(100vh - 380px); }
+}

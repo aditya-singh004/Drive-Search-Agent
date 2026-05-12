@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.local
+
+# Secrets (keep README in secrets/ tracked)
+secrets/*
+!secrets/README.txt
+*-service-account*.json
+service-account*.json
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Streamlit
+.streamlit/
