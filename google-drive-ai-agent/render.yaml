@@ -4,13 +4,17 @@
 # You must still set secrets in the Render dashboard (see README "Deploy on Render").
 # Deploy API first, note its URL, then set BACKEND_URL on the UI service.
 
+# Paths are relative to your GIT REPO ROOT (what Render clones).
+# If this repo root IS `google-drive-ai-agent/` (only this app in the repo), change
+# every `./google-drive-ai-agent/` prefix below to `./` (e.g. `./backend/Dockerfile`).
+
 services:
   - type: web
     name: drive-search-api
     runtime: docker
     plan: free
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    dockerfilePath: ./google-drive-ai-agent/backend/Dockerfile
+    dockerContext: ./google-drive-ai-agent/backend
     healthCheckPath: /health
     envVars:
       - key: OPENAI_API_KEY
@@ -28,8 +32,8 @@ services:
     name: drive-search-ui
     runtime: docker
     plan: free
-    dockerfilePath: ./frontend/Dockerfile
-    dockerContext: ./frontend
+    dockerfilePath: ./google-drive-ai-agent/frontend/Dockerfile
+    dockerContext: ./google-drive-ai-agent/frontend
     envVars:
       # Full URL of the API service, e.g. https://drive-search-api.onrender.com
       - key: BACKEND_URL

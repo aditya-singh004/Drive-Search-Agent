@@ -176,10 +176,12 @@ Render builds from your repository.
 
 1. **New → Web Service →** connect repo.
 2. **Runtime:** Docker.
-3. **Root Directory:** leave empty **or** use Blueprint (see below).
-4. If configuring manually:
+3. **Root Directory** depends on how the repo is laid out on GitHub:
+   - If the repo root **only** contains this app (`backend/`, `frontend/` at the top): leave **Root Directory** empty.
+   - If the app lives in a subfolder (e.g. `AI Agent` repo with `google-drive-ai-agent/backend/...`): set **Root Directory** to `google-drive-ai-agent`.
+4. If configuring manually (paths are **relative to Root Directory** if set, else repo root):
    - **Dockerfile Path:** `backend/Dockerfile`
-   - **Docker build context:** `backend` (Render may label this “Docker Context” — set to `backend`).
+   - **Docker build context:** `backend`
 5. **Health Check Path:** `/health`
 
 **Environment variables** (Environment tab):
@@ -198,8 +200,9 @@ Deploy and copy the API URL, e.g. `https://drive-search-api.onrender.com`.
 ### 3) Create the **Streamlit** service
 
 1. **New → Web Service →** same repo.
-2. **Dockerfile Path:** `frontend/Dockerfile`
-3. **Docker build context:** `frontend`
+2. Use the **same Root Directory** rule as the API (empty vs `google-drive-ai-agent`).
+3. **Dockerfile Path:** `frontend/Dockerfile`
+4. **Docker build context:** `frontend`
 
 **Environment:**
 
@@ -211,7 +214,17 @@ Redeploy if needed. Open the Streamlit URL and chat.
 
 ### 4) Optional: Blueprint
 
-Repo root includes **`render.yaml`**. You can use **New → Blueprint** to create both services; then fill **sync: false** secrets in the dashboard (`OPENAI_API_KEY`, paths, `CORS_ORIGINS`, `BACKEND_URL`).
+Repo root may include **`render.yaml`**. Paths in that file are relative to the **Git repo root**. If your app is nested (e.g. `google-drive-ai-agent/backend`), the committed `render.yaml` uses `./google-drive-ai-agent/...`. If your repo root **is** the app folder only, edit `render.yaml` and remove the `google-drive-ai-agent/` prefix from `dockerfilePath` and `dockerContext`.
+
+Use **New → Blueprint** to create both services; then fill **sync: false** secrets in the dashboard (`OPENAI_API_KEY`, paths, `CORS_ORIGINS`, `BACKEND_URL`).
+
+### Render build error: `lstat .../backend: no such file or directory`
+
+Render is looking for `backend/` at the **wrong** place. Fix one of these:
+
+- Set **Root Directory** to `google-drive-ai-agent` (if that is the folder that contains `backend/` and `frontend/` in your GitHub repo), **or**
+- Push a repo whose **root** is the `google-drive-ai-agent` folder (so `backend/` exists at the top level), **or**
+- If you use Blueprint, align `dockerfilePath` / `dockerContext` in `render.yaml` with your real folder names.
 
 ### Notes
 
