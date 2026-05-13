@@ -168,6 +168,19 @@ docker compose up --build
 
 Host **two** Web Services from this repo: one Docker image for the API, one for Streamlit. Dockerfiles listen on Render’s **`PORT`** (`backend/Dockerfile`, `frontend/Dockerfile`).
 
+### Example deployment (this project)
+
+| Role | URL |
+|------|-----|
+| **Streamlit (frontend)** | [https://drive-search-agent-1.onrender.com](https://drive-search-agent-1.onrender.com) |
+| **FastAPI (backend)** | [https://drive-search-agent.onrender.com](https://drive-search-agent.onrender.com) |
+| **OpenAPI docs** | [https://drive-search-agent.onrender.com/docs](https://drive-search-agent.onrender.com/docs) |
+
+Configure production env vars to match:
+
+- **API service →** `CORS_ORIGINS` = `https://drive-search-agent-1.onrender.com` (exact Streamlit origin; no trailing slash).
+- **Streamlit service →** `BACKEND_URL` = `https://drive-search-agent.onrender.com` (HTTPS; no trailing slash). Users can override this in the sidebar **Backend URL** field.
+
 ### 1) Push the project to GitHub
 
 Render builds from your repository.
@@ -191,11 +204,11 @@ Render builds from your repository.
 | `OPENAI_API_KEY` | Your OpenAI key |
 | `GOOGLE_DRIVE_FOLDER_ID` | Your Drive folder ID |
 | `GOOGLE_SERVICE_ACCOUNT_FILE` | Path where the JSON key file is mounted (see Secret Files below) |
-| `CORS_ORIGINS` | Your Streamlit site URL, e.g. `https://drive-search-ui.onrender.com` (comma-separated if multiple) |
+| `CORS_ORIGINS` | Your Streamlit origin, e.g. `https://drive-search-agent-1.onrender.com` (comma-separated if multiple) |
 
 **Service account JSON on Render:** do **not** commit the key. Use **Environment → Secret Files**: upload your JSON and note the **mount path** Render shows (often under `/etc/secrets/`). Set `GOOGLE_SERVICE_ACCOUNT_FILE` to that **exact path** (e.g. `/etc/secrets/google-service-account.json`).
 
-Deploy and copy the API URL, e.g. `https://drive-search-api.onrender.com`.
+Deploy the API and note its public URL (example: `https://drive-search-agent.onrender.com`).
 
 ### 3) Create the **Streamlit** service
 
@@ -208,9 +221,9 @@ Deploy and copy the API URL, e.g. `https://drive-search-api.onrender.com`.
 
 | Key | Value |
 |-----|--------|
-| `BACKEND_URL` | `https://<your-api-name>.onrender.com` (HTTPS, no trailing slash) |
+| `BACKEND_URL` | Your API URL, e.g. `https://drive-search-agent.onrender.com` (HTTPS, no trailing slash) |
 
-Redeploy if needed. Open the Streamlit URL and chat.
+Redeploy if needed. Open the Streamlit URL (e.g. [drive-search-agent-1.onrender.com](https://drive-search-agent-1.onrender.com)) and chat.
 
 ### 4) Optional: Blueprint
 
@@ -237,7 +250,7 @@ Render is looking for `backend/` at the **wrong** place. Fix one of these:
 ### Notes
 
 - **Cold starts:** Free tier sleeps idle services; first request can take ~30–60s.
-- **Order:** Deploy API first → set `BACKEND_URL` on UI → set `CORS_ORIGINS` on API to the UI URL → redeploy API if CORS blocks the browser.
+- **Order:** Deploy API first → set `BACKEND_URL` on UI (e.g. `https://drive-search-agent.onrender.com`) → set `CORS_ORIGINS` on API to the UI origin (e.g. `https://drive-search-agent-1.onrender.com`) → redeploy API if CORS blocks the browser.
 
 ## Example queries
 
