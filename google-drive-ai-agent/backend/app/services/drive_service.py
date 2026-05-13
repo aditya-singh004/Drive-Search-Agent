@@ -108,14 +108,27 @@ class DriveService:
         except HttpError as exc:
             status = getattr(exc, "status_code", None) or getattr(exc.resp, "status", "")
             content = exc.content.decode(errors="replace") if exc.content else ""
-            logger.warning("Drive HttpError status=%s body=%s", status, content[:500])
+            logger.warning("Drive HttpError status=%s body=%s", status, content[:800])
             if str(status) == "429":
                 raise DriveServiceError(
                     "Google Drive rate limit reached. Please wait a moment and try again.",
                     code="rate_limited",
                 ) from exc
+            if str(status) in {"403", "404"}:
+                raise DriveServiceError(
+                    "Google Drive denied access (HTTP "
+                    f"{status}). Share the folder with your service account email as Viewer, "
+                    "confirm GOOGLE_DRIVE_FOLDER_ID matches that folder, and ensure Drive API is enabled.",
+                    code="drive_permission",
+                ) from exc
+            if str(status) == "400":
+                raise DriveServiceError(
+                    "Google Drive rejected the search query (HTTP 400). "
+                    "The query may be invalid; try a simpler filter.",
+                    code="drive_bad_query",
+                ) from exc
             raise DriveServiceError(
-                "Google Drive search failed. Try simplifying your request.",
+                f"Google Drive API error (HTTP {status}). Check Render logs for details.",
                 code="drive_http_error",
             ) from exc
         except Exception as exc:  # noqa: BLE001

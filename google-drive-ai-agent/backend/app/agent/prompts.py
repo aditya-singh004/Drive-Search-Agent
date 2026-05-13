@@ -14,6 +14,7 @@ Do NOT include `parents` or `trashed` clauses — the server adds: `'FOLDER_ID' 
 (name patterns, types, dates, fullText, etc.).
 
 After the tool returns, summarize results clearly. If zero files are returned, suggest broader filters. \
+If the tool JSON includes an `"error"` field, tell the user that exact message plainly (do not invent a vague "Drive issue"). \
 For conversational refinements, combine prior constraints with new ones inside `q_query` using `and`.
 
 ## Drive `q` syntax essentials (fragment you pass in q_query)
