@@ -218,6 +218,14 @@ Repo root may include **`render.yaml`**. Paths in that file are relative to the 
 
 Use **New → Blueprint** to create both services; then fill **sync: false** secrets in the dashboard (`OPENAI_API_KEY`, paths, `CORS_ORIGINS`, `BACKEND_URL`).
 
+### Render build error: `"/app": not found` (checksum / cache key)
+
+Almost always means **Docker Build Context** is wrong in the Render UI.
+
+- **Do not** set build context to `/app`. That is a path **inside the container** after the image runs. The build context must be a folder **in your Git repo** on the build machine (e.g. `backend` or `frontend`).
+- With **Root Directory** = `google-drive-ai-agent`: set **Dockerfile Path** to `backend/Dockerfile`, **Docker Build Context** to `backend` (API) or `frontend` (UI).
+- With **Root Directory** empty and repo layout `google-drive-ai-agent/backend/...`: use **Dockerfile Path** `google-drive-ai-agent/backend/Dockerfile` and **Context** `google-drive-ai-agent/backend`.
+
 ### Render build error: `lstat .../backend: no such file or directory`
 
 Render is looking for `backend/` at the **wrong** place. Fix one of these:

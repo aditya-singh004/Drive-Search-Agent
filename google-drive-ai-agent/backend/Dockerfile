@@ -10,10 +10,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+# Copy relative to WORKDIR (avoids some remote builders choking on absolute dest paths).
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app /app/app
+COPY app ./app
 
 EXPOSE 8000
 # Render and other hosts inject PORT; default 8000 for local/docker-compose.

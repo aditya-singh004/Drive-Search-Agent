@@ -1,30 +1,28 @@
-# Render Blueprint (optional): defines two Docker web services.
-# Dashboard: New → Blueprint → connect repo → Render reads this file.
+# Render Blueprint: two Docker web services.
+# https://render.com/docs/monorepo-support
 #
-# You must still set secrets in the Render dashboard (see README "Deploy on Render").
-# Deploy API first, note its URL, then set BACKEND_URL on the UI service.
-
-# Paths are relative to your GIT REPO ROOT (what Render clones).
-# If this repo root IS `google-drive-ai-agent/` (only this app in the repo), change
-# every `./google-drive-ai-agent/` prefix below to `./` (e.g. `./backend/Dockerfile`).
+# rootDir = folder that contains backend/ and frontend/ in your Git repo.
+# If your repo root IS already that folder (no extra wrapper), change rootDir to "."
+# and use dockerfilePath ./Dockerfile with dockerContext . for each — or split services.
+#
+# After deploy: set secrets in dashboard (OPENAI_API_KEY, GOOGLE_*, CORS_ORIGINS, BACKEND_URL).
 
 services:
   - type: web
     name: drive-search-api
     runtime: docker
     plan: free
-    dockerfilePath: ./google-drive-ai-agent/backend/Dockerfile
-    dockerContext: ./google-drive-ai-agent/backend
+    rootDir: google-drive-ai-agent
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     healthCheckPath: /health
     envVars:
       - key: OPENAI_API_KEY
         sync: false
       - key: GOOGLE_DRIVE_FOLDER_ID
         sync: false
-      # Path where your uploaded Secret File is mounted (match Secret Files config):
       - key: GOOGLE_SERVICE_ACCOUNT_FILE
         sync: false
-      # Must include your Streamlit URL, e.g. https://drive-search-ui.onrender.com
       - key: CORS_ORIGINS
         sync: false
 
@@ -32,9 +30,9 @@ services:
     name: drive-search-ui
     runtime: docker
     plan: free
-    dockerfilePath: ./google-drive-ai-agent/frontend/Dockerfile
-    dockerContext: ./google-drive-ai-agent/frontend
+    rootDir: google-drive-ai-agent
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
     envVars:
-      # Full URL of the API service, e.g. https://drive-search-api.onrender.com
       - key: BACKEND_URL
         sync: false

@@ -9,10 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app
+COPY app.py .
+COPY components ./components
+COPY styles ./styles
+COPY utils ./utils
 
 EXPOSE 8501
 ENV BACKEND_URL=http://api:8000
